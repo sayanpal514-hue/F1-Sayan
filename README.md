@@ -1,7 +1,7 @@
 F1 Live — Sayan
 📱 Live Stream Hub
 
-![F1 Live by Sayan](screenshot.jpg))
+![Live Preview](screenshot.jpg)
 
 Disclaimer
 🚫 

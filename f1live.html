@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 Live - Sayan</title>
+<link href="https://fonts.googleapis.com/css2?family=Racing+Sans+One&family=Exo+2:wght@300;400;600;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #e10600;
+    --red2: #ff2a1f;
+    --dark: #0a0a0f;
+    --darker: #050508;
+    --card: #111118;
+    --card2: #16161f;
+    --border: #2a2a3a;
+    --gold: #ffd700;
+    --text: #e8e8f0;
+    --muted: #7a7a9a;
+    --live-green: #00e676;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--darker);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Ticker */
+  .ticker-bar {
+    background: linear-gradient(90deg, var(--red), #b00000, var(--red));
+    padding: 8px 0;
+    overflow: hidden;
+    position: relative;
+    z-index: 100;
+  }
+  .ticker-inner {
+    display: flex;
+    animation: ticker 20s linear infinite;
+    white-space: nowrap;
+    gap: 80px;
+  }
+  .ticker-inner span {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .ticker-inner span::before {
+    content: '⚡ ';
+  }
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Header */
+  header {
+    background: linear-gradient(180deg, #0d0d14 0%, rgba(10,10,15,0.95) 100%);
+    border-bottom: 2px solid var(--red);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    backdrop-filter: blur(12px);
+  }
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-icon {
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(135deg, var(--red), #800000);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 900;
+    color: #fff;
+    border: 2px solid rgba(255,255,255,0.15);
+    box-shadow: 0 0 20px rgba(225,6,0,0.4);
+    letter-spacing: -1px;
+  }
+  .logo-text h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: 20px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 1px;
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(225,6,0,0.5);
+  }
+  .logo-text h1 span { color: var(--red); }
+  .logo-text p {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 3px;
+    font-family: 'Exo 2', sans-serif;
+  }
+  .header-btns {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .btn-live {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    animation: pulse-live 2s infinite;
+  }
+  .btn-live::before {
+    content: '';
+    width: 7px; height: 7px;
+    background: #fff;
+    border-radius: 50%;
+    animation: blink 1s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  @keyframes pulse-live {
+    0%,100% { box-shadow: 0 0 0 0 rgba(225,6,0,0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(225,6,0,0); }
+  }
+  .btn-tg {
+    background: #0088cc;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .btn-tg:hover { background: #006aa3; }
+
+  /* Main content */
+  main {
+    padding: 20px 16px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  /* Stream card */
+  .stream-card {
+    background: var(--card);
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(225,6,0,0.07);
+    animation: fadeUp 0.6s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(30px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  .stream-header {
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, rgba(225,6,0,0.08), transparent);
+    border-bottom: 1px solid var(--border);
+  }
+  .stream-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .stream-logo {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, #cc0000, #800000);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .stream-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .stream-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    letter-spacing: 1px;
+  }
+  .on-air {
+    background: rgba(225,6,0,0.15);
+    border: 1px solid var(--red);
+    color: var(--red);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    animation: pulse-live 2s infinite;
+  }
+  .on-air::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--red);
+    border-radius: 50%;
+    animation: blink 1s infinite;
+  }
+
+  /* Video player */
+  .video-wrap {
+    position: relative;
+    background: #000;
+    aspect-ratio: 16/9;
+  }
+  .video-wrap video {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .video-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .f1-watermark {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 2px;
+    pointer-events: none;
+  }
+
+  /* Quality selector */
+  .quality-wrap {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .quality-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .quality-label::before { content: '📺'; font-size: 13px; }
+  .quality-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .q-btn {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--card2);
+    color: var(--muted);
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .q-btn:hover { border-color: var(--red); color: var(--red); }
+  .q-btn.active {
+    background: linear-gradient(135deg, var(--red), #900000);
+    border-color: var(--red);
+    color: #fff;
+    box-shadow: 0 0 14px rgba(225,6,0,0.35);
+  }
+
+  /* Stats row */
+  .stats-row {
+    padding: 14px 18px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .stat span { font-size: 14px; }
+
+  /* Race info cards */
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 24px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 10px;
+    animation: fadeUp 0.8s ease both;
+    animation-delay: 0.2s;
+  }
+  .info-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .info-card:hover { border-color: rgba(225,6,0,0.4); transform: translateY(-2px); }
+  .info-card-icon { font-size: 22px; margin-bottom: 8px; }
+  .info-card-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .info-card-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .info-card-value.red { color: var(--red); }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 24px 16px;
+    color: var(--muted);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 10px;
+  }
+  footer strong { color: var(--red); font-family: 'Orbitron', monospace; }
+
+  /* Telegram popup */
+  .tg-popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .tg-popup {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 32px 28px;
+    max-width: 340px;
+    width: 90%;
+    border: 1px solid var(--border);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 40px rgba(0,136,204,0.1);
+    text-align: center;
+    animation: popIn 0.4s cubic-bezier(.34,1.56,.64,1) both;
+    position: relative;
+  }
+  @keyframes popIn {
+    from { opacity:0; transform:scale(0.8) translateY(20px); }
+    to { opacity:1; transform:scale(1) translateY(0); }
+  }
+  .tg-popup .tg-icon {
+    width: 68px; height: 68px;
+    background: linear-gradient(135deg, #0088cc, #005f99);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    margin: 0 auto 18px;
+    box-shadow: 0 0 30px rgba(0,136,204,0.4);
+  }
+  .tg-popup h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .tg-popup p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 22px;
+  }
+  .tg-popup p strong { color: var(--text); }
+  .tg-join-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #0088cc, #005f99);
+    color: #fff;
+    border-radius: 12px;
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: opacity 0.2s, transform 0.2s;
+    margin-bottom: 10px;
+  }
+  .tg-join-btn:hover { opacity:0.9; transform:translateY(-1px); }
+  .tg-close-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 100%;
+    padding: 11px;
+    border-radius: 12px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Exo 2', sans-serif;
+  }
+  .tg-close-btn:hover { border-color: var(--red); color: var(--text); }
+  .tg-popup-badge {
+    position: absolute;
+    top: -10px; right: 20px;
+    background: var(--red);
+    color: #fff;
+    font-size: 10px;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* Race countdown strip */
+  .countdown-strip {
+    background: linear-gradient(90deg, var(--card2), rgba(225,6,0,0.05), var(--card2));
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--red);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    animation: fadeUp 1s ease both;
+    animation-delay: 0.4s;
+  }
+  .countdown-icon { font-size: 24px; }
+  .countdown-text { flex: 1; }
+  .countdown-text h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+  .countdown-text p { font-size: 11px; color: var(--muted); }
+  .countdown-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--red);
+  }
+</style>
+</head>
+<body>
+
+<!-- Telegram Popup -->
+<div class="tg-popup-overlay" id="tgOverlay">
+  <div class="tg-popup">
+    <div class="tg-popup-badge">JOIN NOW</div>
+    <div class="tg-icon">✈️</div>
+    <h2>F1 Live Updates</h2>
+    <p>Get <strong>live race alerts, stream links</strong>, and exclusive F1 content directly on Telegram. Never miss a lap!</p>
+    <a href="https://t.me/TestCricket18" target="_blank" class="tg-join-btn">✈️ JOIN TELEGRAM CHANNEL</a>
+    <button class="tg-close-btn" onclick="document.getElementById('tgOverlay').style.display='none'">Maybe Later</button>
+  </div>
+</div>
+
+<!-- Ticker -->
+<div class="ticker-bar">
+  <div class="ticker-inner">
+    <span>F1 LIVE STREAM NOW AVAILABLE</span>
+    <span>HD QUALITY UP TO 1080P</span>
+    <span>JOIN TELEGRAM FOR UPDATES</span>
+    <span>F1 LIVE BY SAYAN</span>
+    <span>24/7 LIVE RACING COVERAGE</span>
+    <span>F1 LIVE STREAM NOW AVAILABLE</span>
+    <span>HD QUALITY UP TO 1080P</span>
+    <span>JOIN TELEGRAM FOR UPDATES</span>
+    <span>F1 LIVE BY SAYAN</span>
+    <span>24/7 LIVE RACING COVERAGE</span>
+  </div>
+</div>
+
+<!-- Header -->
+<header>
+  <div class="logo-wrap">
+    <div class="logo-icon">F1</div>
+    <div class="logo-text">
+      <h1>F1 LIVE <span>— SAYAN</span></h1>
+      <p>Live Stream Hub</p>
+    </div>
+  </div>
+  <div class="header-btns">
+    <button class="btn-live">LIVE</button>
+    <a href="https://t.me/TestCricket18" target="_blank" class="btn-tg">✈️</a>
+  </div>
+</header>
+
+<!-- Main -->
+<main>
+  <div class="stream-card">
+    <!-- Stream header -->
+    <div class="stream-header">
+      <div class="stream-info">
+        <div class="stream-logo">🏎️</div>
+        <div>
+          <div class="stream-name">F1 Live Stream</div>
+          <div class="stream-sub">Live HD Broadcast</div>
+        </div>
+      </div>
+      <div class="on-air">ON AIR</div>
+    </div>
+
+    <!-- Video player -->
+    <div class="video-wrap">
+      <video id="mainVideo" controls autoplay muted playsinline></video>
+      <div class="video-overlay"></div>
+      <div class="f1-watermark">F1 LIVE · SAYAN</div>
+    </div>
+
+    <!-- Quality -->
+    <div class="quality-wrap">
+      <div class="quality-label">Stream Quality</div>
+      <div class="quality-btns">
+        <button class="q-btn" onclick="setQuality(this)">240p</button>
+        <button class="q-btn" onclick="setQuality(this)">360p</button>
+        <button class="q-btn" onclick="setQuality(this)">480p</button>
+        <button class="q-btn active" onclick="setQuality(this)">720p</button>
+        <button class="q-btn" onclick="setQuality(this)">1080p</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat"><span>🕐</span> 24/7 Live</div>
+      <div class="stat"><span>🏁</span> F1 Racing</div>
+      <div class="stat"><span>📺</span> HD Available</div>
+      <div class="stat"><span>⚡</span> Low Latency</div>
+    </div>
+  </div>
+
+  <!-- Race info -->
+  <div class="section-title">Race Info</div>
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-card-icon">🏎️</div>
+      <div class="info-card-label">Category</div>
+      <div class="info-card-value red">Formula 1</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-icon">📡</div>
+      <div class="info-card-label">Stream</div>
+      <div class="info-card-value">Live HD</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-icon">🌍</div>
+      <div class="info-card-label">Coverage</div>
+      <div class="info-card-value">Global</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-icon">⚡</div>
+      <div class="info-card-label">Status</div>
+      <div class="info-card-value red">ON AIR</div>
+    </div>
+  </div>
+
+  <!-- Telegram strip -->
+  <div class="countdown-strip" onclick="window.open('https://t.me/TestCricket18','_blank')" style="cursor:pointer">
+    <div class="countdown-icon">✈️</div>
+    <div class="countdown-text">
+      <h3>Join F1 Live Telegram</h3>
+      <p>Get live alerts, stream links & race updates</p>
+    </div>
+    <div class="countdown-num">→</div>
+  </div>
+</main>
+
+<footer>
+  © 2026 <strong>F1 LIVE</strong> — All rights reserved by <strong>Sayan</strong>
+</footer>
+
+<!-- HLS.js -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+  // Load HLS stream
+  const video = document.getElementById('mainVideo');
+  const streamUrl = 'https://amg12058-c15studio-amg12058c1-lg-us-5787.playouts.now.amagi.tv/playlist.m3u8';
+
+  if (Hls.isSupported()) {
+    const hls = new Hls({ enableWorker: true, lowLatencyMode: true });
+    hls.loadSource(streamUrl);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(()=>{}); });
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = streamUrl;
+    video.play().catch(()=>{});
+  }
+
+  // Quality buttons (visual only - HLS auto manages quality)
+  function setQuality(el) {
+    document.querySelectorAll('.q-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // Show popup after 2s
+  setTimeout(() => {
+    document.getElementById('tgOverlay').style.display = 'flex';
+  }, 2000);
+</script>
+</body>
+</html>
